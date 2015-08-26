@@ -10,5 +10,6 @@ namespace PTBrainTree.Models
 	{
 		[DataType(DataType.Currency)]
 		public decimal Amount { get; set; }
+		public bool SavePaymentMethod { get; set; }
 	}
 }

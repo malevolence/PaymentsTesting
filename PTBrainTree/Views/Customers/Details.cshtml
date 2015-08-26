@@ -1,0 +1,152 @@
+﻿@model Braintree.Customer
+@{
+    ViewBag.Title = "Customer Details";
+}
+<dl>
+	<dt>Name</dt>
+	<dd>@Model.FirstName @Model.LastName</dd>
+	<dt>Company</dt>
+	<dd>@Model.Company</dd>
+	<dt>Email</dt>
+	<dd>@Model.Email</dd>
+	<dt>Phone</dt>
+	<dd>@Model.Phone</dd>
+	<dt>Website</dt>
+	<dd>@Model.Website</dd>
+	<dt>Created On</dt>
+	<dd>@Model.CreatedAt</dd>
+	<dt>Updated On</dt>
+	<dd>@Model.UpdatedAt</dd>
+</dl>
+@if (Model.PaymentMethods != null && Model.PaymentMethods.Count() > 0) {
+	<div class="alert alert-info">@Model.PaymentMethods.Count() payment methods found for this customer.</div>
+	<table class="table table-hover table-striped table-condensed small">
+		<thead>
+			<tr>
+				<th style="width: 500px;">Actions</th>
+				<th>Type</th>
+				<th>Number</th>
+				<th>Expires</th>
+				<th>Default?</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (CreditCard paymentMethod in Model.PaymentMethods) {
+				<tr>
+					<td>
+						<form method="post" action="@Url.Action("Charge", new { id = Model.Id })" style="margin: 0; padding: 0;">
+							<input type="hidden" name="paymentMethodToken" value="@paymentMethod.Token" />
+							<div class="input-group">
+								<span class="input-group-addon"><span class="glyphicon glyphicon-usd"></span></span>
+								<input type="text" class="form-control" name="amount" placeholder="Amount in US dollars" />
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default">Charge It</button>
+								</span>
+							</div>
+						</form>
+						<form method="post" action="@Url.Action("Signup", new { id = Model.Id })" style="margin: 0; padding: 0;">
+							<input type="hidden" name="token" value="@paymentMethod.Token" />
+							<div class="input-group">
+								<select name="plan" class="form-control">
+									<option value="9d4b">Featured Profile - $49 / month</option>
+									<option value="kkyw">Basic Profile - $4.99 / month</option>
+								</select>
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-default">Subscribe</button>
+								</span>
+							</div>
+						</form>
+					</td>
+					<td>@paymentMethod.CardType <img src="@paymentMethod.ImageUrl" alt="payment method" /></td>
+					<td>@paymentMethod.MaskedNumber</td>
+					<td>@paymentMethod.ExpirationDate</td>
+					<td>@paymentMethod.IsDefault</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+} else {
+	<div class="alert alert-info">No payment methods found for this customer.</div>
+}
+
+<form method="post" action="@Url.Action("AddPaymentMethod", new { id = Model.Id })" class="form-horizontal" id="add-payment-method">
+	<fieldset>
+		<legend>Add Payment Method</legend>
+		<div class="form-group">
+			<label class="control-label col-sm-3">Name on Card</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" data-braintree-name="cardholder_name" placeholder="Name on Card" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-3">Credit Card Number</label>
+			<div class="col-sm-9">
+				<div class="row">
+					<div class="col-sm-10">
+						<input type="text" class="form-control" data-braintree-name="number" placeholder="Credit Card Number" />
+					</div>
+					<div class="col-sm-2">
+						<input type="text" class="form-control" data-braintree-name="cvv" placeholder="CVV2" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-3">Expiration Date</label>
+			<div class="col-sm-9">
+				<div class="row">
+					<div class="col-sm-6">
+						<select data-braintree-name="expiration_month" class="form-control">
+							<option>-- Select Month --</option>
+							<option value="1">1 - January</option>
+							<option value="2">2 - February</option>
+							<option value="3">3 - March</option>
+							<option value="4">4 - April</option>
+							<option value="5">5 - May</option>
+							<option value="6">6 - June</option>
+							<option value="7">7 - July</option>
+							<option value="8">8 - August</option>
+							<option value="9">9 - September</option>
+							<option value="10">10 - October</option>
+							<option value="11">11 - November</option>
+							<option value="12">12 - December</option>
+						</select>
+					</div>
+					<div class="col-sm-6">
+						<select data-braintree-name="expiration_year" class="form-control">
+							<option>-- Select Year --</option>
+							<option value="2015">2015</option>
+							<option value="2016">2016</option>
+							<option value="2017">2017</option>
+							<option value="2018">2018</option>
+							<option value="2019">2019</option>
+							<option value="2020">2020</option>
+							<option value="2021">2021</option>
+							<option value="2022">2022</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-3">Zip / Postal Code</label>
+			<div class="col-sm-3">
+				<input type="text" data-braintree-name="postal_code" class="form-control" />
+			</div>
+		</div>
+	</fieldset>
+	<div class="form-group">
+		<div class="col-sm-9 col-sm-offset-3">
+			<button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span> Save Payment Method</button>
+		</div>
+	</div>
+</form>
+
+@section scripts {
+	<script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+	<script>
+		$(function () {
+			braintree.setup('@ViewBag.Token', 'custom', { id: 'add-payment-method' });
+		});
+	</script>
+}

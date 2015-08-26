@@ -15,3 +15,5 @@
 .dl-horizontal dt {
     white-space: normal;
 }
+
+.table>tbody>tr>td { vertical-align: middle; }

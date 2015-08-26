@@ -1,0 +1,42 @@
+﻿@model Braintree.ResourceCollection<Customer>
+@{
+    ViewBag.Title = "Customers";
+}
+
+@if (Model.MaximumCount > 0) {
+	<div class="alert alert-info">There are @Model.MaximumCount saved customers.</div>
+	<table class="table table-bordered table-condensed table-striped table-hover small">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Name</th>
+				<th class="text-center">Email</th>
+				<th class="text-center">Created</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr>
+				<td class="text-center"><a href="@Url.Action("Create")" class="btn btn-default btn-block btn-sm">Add New Customer</a></td>
+				<td colspan="3"></td>
+			</tr>
+		</tfoot>
+		<tbody>
+			@foreach (Customer customer in Model) {
+			<tr>
+				<td class="text-center">
+					<div class="btn-group btn-group-sm">
+						<a href="@Url.Action("Details", new { id = customer.Id })" class="btn btn-default"><span class="glyphicon glyphicon-eye-open"></span></a>
+						<a href="@Url.Action("Edit", new { id = customer.Id })" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
+						<a href="@Url.Action("Delete", new { id = customer.Id })" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
+					</div>
+				</td>
+				<td>@customer.FirstName @customer.LastName</td>
+				<td class="text-center">@customer.Email</td>
+				<td class="text-center">@(customer.CreatedAt.HasValue ? customer.CreatedAt.Value.ToString("g") : "")</td>
+			</tr>
+			}
+		</tbody>
+	</table>
+} else {
+	<div class="alert alert-info">No customers found. You can <a href="@Url.Action("Create")">add one here</a>.</div>
+}
