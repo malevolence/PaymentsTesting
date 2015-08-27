@@ -17,3 +17,5 @@
 }
 
 .table>tbody>tr>td { vertical-align: middle; }
+
+dd { margin-bottom: 10px; }

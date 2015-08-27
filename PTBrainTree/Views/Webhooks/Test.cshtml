@@ -1,0 +1,49 @@
+﻿@model WebhookNotification
+@{
+    ViewBag.Title = "Webhook Notification Test";
+}
+
+<dl>
+	<dt>Timestamp</dt>
+	<dd>@Model.Timestamp</dd>
+
+	<dt>Kind</dt>
+	<dd>@Model.Kind</dd>
+
+	@if (!string.IsNullOrEmpty(Model.Message))
+	{
+		<dt>Message</dt>
+		<dd>@Model.Message</dd>
+	}
+
+	@if (Model.Errors != null)
+	{
+		<dt>Errors</dt>
+		<dd>@Model.Errors.Count</dd>
+	}
+
+	@if (Model.Subscription != null)
+	{
+		<dt>Plan Id</dt>
+		<dd>@Model.Subscription.Id</dd>
+
+		<dt>Status</dt>
+		<dd>@Model.Subscription.Status</dd>
+
+		<dt>Created</dt>
+		<dd>@Model.Subscription.CreatedAt</dd>
+	}
+
+	@if (Model.Transaction != null)
+	{
+		<dt>Transaction Id</dt>
+		<dd>@Model.Transaction.Id</dd>
+
+		<dt>Status</dt>
+		<dd>@Model.Transaction.Status</dd>
+
+		<dt>Amount</dt>
+		<dd>@Model.Transaction.Amount</dd>
+	}
+</dl>
+

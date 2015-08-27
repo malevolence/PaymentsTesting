@@ -1,0 +1,55 @@
+﻿@model ResourceCollection<Subscription>
+@{
+    ViewBag.Title = "Subscriptions";
+}
+
+@if (Model.MaximumCount > 0) {
+	<div class="alert alert-info">Found @Model.MaximumCount subscriptions.</div>
+	<table class="table table-condensed table-striped table-hover small">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Id</th>
+				<th>Amount</th>
+				<th>Status</th>
+				<th>Created</th>
+				<th>Next Billing Date</th>
+			</tr>
+		</thead>
+		<tbody>
+		@foreach (Subscription sub in Model) {
+			<tr>
+				<td class="text-center">
+					<div class="btn-group btn-group-sm user-actions">
+						<a href="@Url.Action("Details", new { id = sub.Id })" class="btn btn-default"><span class="glyphicon glyphicon-eye-open"></span></a>
+						<a href="@Url.Action("Cancel", new { id = sub.Id })" class="btn btn-warning"><span class="glyphicon glyphicon-ban-circle"></span></a>
+					</div>
+				</td>
+				<td>@sub.Id</td>
+				<td>@(sub.Price.HasValue ? sub.Price.Value.ToString("c") : "")</td>
+				<td>@sub.Status</td>
+				<td>@sub.CreatedAt</td>
+				<td>@(sub.NextBillingDate.HasValue ? sub.NextBillingDate.Value.ToLongDateString() : "none")</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+} else {
+	<div class="alert alert-info">There are no subscriptions.</div>
+}
+
+<form method="post" id="utility-form" class="hidden"></form>
+
+@section scripts {
+	<script>
+		$(function () {
+			$('.user-actions').on('click', '.btn-warning', function (e) {
+				e.preventDefault();
+				if (confirm('Are you certain you want to cancel this subscription? This action cannot be undone.')) {
+					var url = $(this).prop('href');
+					$('#utility-form').prop('action', url).get(0).submit();
+				}
+			});
+		});
+	</script>
+}

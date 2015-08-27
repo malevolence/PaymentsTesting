@@ -1,0 +1,50 @@
+﻿@model Subscription
+@{
+    ViewBag.Title = "Subscription Details";
+}
+
+@if (Model != null) {
+	<dl>
+		<dt>Id</dt>
+		<dd>@Model.Id</dd>
+
+		<dt>PlanId</dt>
+		<dd>@Model.PlanId</dd>
+
+		<dt>Price</dt>
+		<dd>@(Model.Price.HasValue ? Model.Price.Value.ToString("c") : "")</dd>
+
+		<dt>Status</dt>
+		<dd>@Model.Status</dd>
+
+		<dt>Created</dt>
+		<dd>@(Model.CreatedAt.HasValue ? Model.CreatedAt.Value.ToString("g") : "")</dd>
+
+		<dt>Updated</dt>
+		<dd>@(Model.UpdatedAt.HasValue ? Model.UpdatedAt.Value.ToString("g") : "")</dd>
+
+		<dt>Balance</dt>
+		<dd>@(Model.Balance.HasValue ? Model.Balance.Value.ToString("c") : "")</dd>
+
+		<dt>Current Billing Cycle</dt>
+		<dd>@Model.CurrentBillingCycle</dd>
+
+		@if (Model.DaysPastDue.HasValue) {
+		<dt>Days Past Due</dt>
+		<dd>@Model.DaysPastDue</dd>
+		}
+		<dt>Failure Count</dt>
+		<dd>@Model.FailureCount</dd>
+
+		<dt>Expires?</dt>
+		<dd>@(Model.NeverExpires.HasValue ? "false" : "true")</dd>
+
+		<dt>Next Bill Amount</dt>
+		<dd>@(Model.NextBillAmount.HasValue ? Model.NextBillAmount.Value.ToString("c") : "")</dd>
+
+		<dt>Next Billing Date</dt>
+		<dd>@(Model.NextBillingDate.HasValue ? Model.NextBillingDate.Value.ToLongDateString() : "")</dd>
+	</dl>
+} else {
+	<div class="alert alert-warning">Subscription not found.</div>
+}
